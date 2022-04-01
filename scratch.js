@@ -23,25 +23,25 @@ class extension {
                     // `opcode` is the internal ID of the block
                     // It should never change!
                     // It corresponds to the class method with the same name.
-                    opcode: 'hello',
+                    opcode: 'hello1',
                     blockType: Scratch.BlockType.BOOLEAN,
-                    text: 'Hello, world!'
+                    text: 'Hello, world!  1'
                 },
                 {
                     // `opcode` is the internal ID of the block
                     // It should never change!
                     // It corresponds to the class method with the same name.
-                    opcode: 'hello',
+                    opcode: 'hello2',
                     blockType: Scratch.BlockType.REPORTER,
-                    text: 'Hello, world!'
+                    text: 'Hello, world!  2'
                 },
                 {
                     // `opcode` is the internal ID of the block
                     // It should never change!
                     // It corresponds to the class method with the same name.
-                    opcode: 'hello',
+                    opcode: 'hello3',
                     blockType: Scratch.BlockType.COMMAND,
-                    text: 'Hello, world!'
+                    text: 'Hello, world!  3'
                 },
                 {
                     // `opcode` is the internal ID of the block
@@ -58,11 +58,23 @@ class extension {
     /**
     * Corresponds to `opcode: 'hello'` above
     */
-    hello() {
+    hello1() {
         // You can just return a value: any string, boolean, or number will work.
         // If you have to perform an asynchronous action like a request, just return a Promise.
         // The block will wait until the Promise resolves and return the resolved value.
         return true;
+    }
+    hello2() {
+        // You can just return a value: any string, boolean, or number will work.
+        // If you have to perform an asynchronous action like a request, just return a Promise.
+        // The block will wait until the Promise resolves and return the resolved value.
+        return "Hello world!  2";
+    }
+    hello3() {
+        // You can just return a value: any string, boolean, or number will work.
+        // If you have to perform an asynchronous action like a request, just return a Promise.
+        // The block will wait until the Promise resolves and return the resolved value.
+        return hello1();
     }
 
     text() {
