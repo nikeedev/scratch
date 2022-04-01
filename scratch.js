@@ -24,6 +24,22 @@ class extension {
                     // It should never change!
                     // It corresponds to the class method with the same name.
                     opcode: 'hello',
+                    blockType: Scratch.BlockType.BOOLEAN,
+                    text: 'Hello, world!'
+                },
+                {
+                    // `opcode` is the internal ID of the block
+                    // It should never change!
+                    // It corresponds to the class method with the same name.
+                    opcode: 'hello',
+                    blockType: Scratch.BlockType.REPORTER,
+                    text: 'Hello, world!'
+                },
+                {
+                    // `opcode` is the internal ID of the block
+                    // It should never change!
+                    // It corresponds to the class method with the same name.
+                    opcode: 'hello',
                     blockType: Scratch.BlockType.COMMAND,
                     text: 'Hello, world!'
                 },
@@ -33,8 +49,7 @@ class extension {
                     // It corresponds to the class method with the same name.
                     opcode: 'text',
                     blockType: Scratch.BlockType.REPORTER,
-                    text: '\t π',
-                    arguments: Scratch.ArgumentType.MATRIX
+                    text: '\t π'
                 }
             ]
         };
