@@ -9,10 +9,11 @@ import (
 	"net/http"
 	"os"
 	"strings"
-	"io"
+//	"io"
 
 	// vendor
 	"github.com/joho/godotenv"
+	"github.com/gorilla/websocket"
 )
 
 // / For Authentication
@@ -105,7 +106,7 @@ func main() {
 		log.Fatal("Error: ", err)
 	}
 
-	req.Header.Add("Referer", "https://scratch.mit.edu")
+	req.Header.Add("Referer", "https://scratch.mit.edu/")
 	req.Header.Add("X-Requested-With", "XMLHttpRequest")
 	req.Header.Add("X-CSRFToken", "a")
 	req.Header.Add("Cookie", "scratchcsrftoken=a;")
@@ -118,16 +119,17 @@ func main() {
 
  	sessionId := strings.Split(strings.TrimSpace(resp.Cookies()[0].Value), ";")[0]
 	
-	fmt.Println(sessionId)
+	// fmt.Println(sessionId)
 
-	req, err = http.NewRequest("GET", "https://scratch.mit.edu/session/", nil)
+/*	req, err = http.NewRequest("GET", "https://scratch.mit.edu/session/", nil)
 
 	if err != nil {
 		log.Fatal("Error: ", err)
 	}
+
+	req.Header.Add("Referer", "https://scratch.mit.edu/")
 	req.Header.Add("X-CSRFToken", "a")
-	req.Header.Add("Cookie", fmt.Sprintf("scratchcsrftoken=a;scratchsessionsid=${%s};", sessionId))
-	req.Header.Add("Referer", "https://scratch.mit.edu")
+	req.Header.Add("Cookie", fmt.Sprintf("scratchcsrftoken=a;scratchsessionsid='${%s};'", sessionId))
 	req.Header.Add("X-Requested-With", "XMLHttpRequest")
 
 	resp, err = client.Do(req)
@@ -138,12 +140,12 @@ func main() {
 
  	defer resp.Body.Close()
 
-	/* var session SessionInfo
+	var session SessionInfo
 
 	err = json.NewDecoder(resp.Body).Decode(&session)
 	if err != nil {
     	log.Fatal(err)
-	}  */ 
+	} 
 	
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -158,4 +160,67 @@ func main() {
 	}
 	
 	fmt.Println(string(body))
+
+	*/
+
+	// Cloud service
+
+	// wss://clouddata.scratch.mit.edu
+
+	// Handshake: { "method": "handshake", "user": "nikeedev", "project_id": project_id }
+	// Message: { "method": "set", "name": "☁ message", "value": input_data.value }
+	
+	// project_id: 859836142
+
+	
+	headers := http.Header{}
+	headers.Add("Cookie", "scratchsessionsid="+sessionId+";")
+	headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36")
+	headers.Add("Origin", "https://scratch.mit.edu")
+	
+	conn, _, err := websocket.DefaultDialer.Dial("wss://clouddata.scratch.mit.edu", headers)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	
+	defer conn.Close()
+
+	// Send message
+	err = conn.WriteMessage(
+		websocket.TextMessage,
+		[]byte("{ \"method\": \"handshake\", \"user\": \"___22___\", \"project_id\": 859836142 }"),
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Read response
+	messageType, message, err := conn.ReadMessage()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Type:", messageType)
+	fmt.Println("Message:", string(message))
+
+	go func() {
+		err = conn.WriteMessage(
+			websocket.TextMessage,
+			[]byte("{ \"method\": \"set\", \"username\": \"___22___\", \"name\": \"☁message\", \"project_id\": 859836142, \"value\": 456 }"),
+		)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		for {
+			_, msg, err := conn.ReadMessage()
+			if err != nil {
+				return
+			}
+			fmt.Println(string(msg))
+		}
+	}()
 }
+
+
