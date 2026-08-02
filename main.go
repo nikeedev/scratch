@@ -9,7 +9,9 @@ import (
 	"net/http"
 	"os"
 	"strings"
-	//"time"
+	"time"
+	"unicode/utf8"
+	"strconv"
 
 	// vendor
 	"github.com/joho/godotenv"
@@ -23,66 +25,6 @@ type User struct {
 }
 
 ///
-/*
-type SessionInfo struct {
-	User struct {
-		Id           int    	  `json:"id"`
-		Banned       bool   	  `json:"banned"`
-		ShouldVpn	 bool 		  `json:"should_vpn"`
-		Username     string 	  `json:"username"`
-		Token        string 	  `json:"token"`
-		ThumbnailUrl string 	  `json:"thumbnailUrl"`
-		DateJoined   string 	  `json:"dateJoined"`
-		Email        string 	  `json:"email"`
-		BirthYear    int 	 	  `json:"birth_year"`
-		BirthMonth   int 		  `json:"birth_month"`
-		Gender       string       `json:"gender"`
-		Country      string   	  `json:"country"`
-		State        string 	  `json:"state"`
-		MembershipAvatarBadge int `json:"membership_avatar_badge"`
-	} `json:"user"`
-
-	Permissions struct {
-		Admin            bool `json:"admin"`
-		Scratcher        bool `json:"scratcher"`
-		NewScratcher     bool `json:"new_scrather"`
-		InvitedScratcher bool `json:"invited_scratcher"`
-		Social           bool `json:"social"`
-		Educator         bool `json:"educator"`
-		EducatorInvitee  bool `json:"educator_invitee"`
-		Student          bool `json:"student"`
-	} `json:"permissions"`
-
-	Flags struct {
-		MustResetPassword                bool `json:"must_reset_password"`
-		MustCompleteRegistration         bool `json:"must_complete_registration"`
-		HasOutstandingEmailConfirmation  bool `json:"has_outstanding_email_confirmation"`
-		ShowWelcome                      bool `json:"show_welcome"`
-		ConfirmEmailBanner               bool `json:"confirm_email_banner"`
-		UnsupportedBrowserBanner         bool `json:"unsupported_browser_banner"`
-		ProjectCommentsEnabled           bool `json:"project_comments_enabled"`
-		GalleryCommentsEnabled           bool `json:"gallery_comments_enabled"`
-		UserprofileCommentsEnabled       bool `json:"userprofile_comments_enabled"`
-		EverythingIsTotallyNormal        bool `json:"everything_is_totally_normal"`
-	} `json:"flags"`
-}
-
-type ApiInfo struct {
-	id          int
-	username    string
-	scratchteam bool
-	history     struct {
-		joined string
-	}
-
-	profile struct {
-		id      int
-		status  string
-		bio     string
-		country string
-	}
-}
-*/
 
 type CloudMessage struct {
 	Method    string `json:"method"`
@@ -90,6 +32,58 @@ type CloudMessage struct {
 	ProjectID string `json:"project_id,omitempty"`
 	Name      string `json:"name,omitempty"`
 	Value     string `json:"value,omitempty"`
+}
+
+func Enblue(text string) string {
+	letters := "abcdefghijklmnopqrstuvwxyzæøåABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ1234567890"
+	two := ""
+
+	if utf8.RuneCountInString(text) * 2 > 256 {
+		fmt.Println("\n=== Text too long, max. 128 letters ===\n")
+	} else {
+		for i := 0; i < utf8.RuneCountInString(text); i++ {
+			if text[i] == ' ' {
+				two += "69"	
+			} else {
+				temp := strings.Index(letters, string(text[i])) + 1
+				
+				str := strconv.Itoa(temp)
+	
+				if temp < 9 {
+					two += "0" + str
+				} else {
+					two += str
+				}
+			}
+		}
+	}
+	return two
+}
+
+func Deblue(num string) string {
+	letters := "abcdefghijklmnopqrstuvwxyzæøåABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ1234567890"
+	one := ""
+
+	for e := 0; e > utf8.RuneCountInString(num); e += 2 {
+		pair := num[e-1:e]
+
+		if pair == "69" {
+			one += " "
+			continue
+		}
+
+		index, err := strconv.Atoi(pair)
+		if err != nil {
+			fmt.Println("Conversion error:", err)
+			continue
+		}
+
+		if index >= 0 && index < len(letters) {
+			one += string(letters[index])
+		}	
+	}
+
+	return one
 }
 
 func main() {
@@ -132,38 +126,7 @@ func main() {
 	defer resp.Body.Close()
 
 	// fmt.Println(sessionId)
-/*
-	req, err = http.NewRequest("GET", "https://scratch.mit.edu/session/", nil)
 
-	if err != nil {
-		log.Fatal("Error: ", err)
-	}
-
-	req.Header.Add("Referer", "https://scratch.mit.edu/")
-	req.Header.Add("X-CSRFToken", csrfToken)
-	req.Header.Add("Cookie", fmt.Sprintf("scratchcsrftoken=%s;scratchsessionsid=%s;", csrfToken, sessionId))
-	req.Header.Add("X-Requested-With", "XMLHttpRequest")
-	
-	fmt.Println(req.Header)
-
-	resp, err = client.Do(req)
-
-	if err != nil {
-		log.Fatal("Error: ", err)
-	}
-
- 	defer resp.Body.Close()
-
-	var session SessionInfo
-
-	err = json.NewDecoder(resp.Body).Decode(&session)
-	if err != nil {
-    	log.Fatal(err)
-	} 
-
-	fmt.Println(session)
-
-*/
 	// Cloud service
 	// wss://clouddata.scratch.mit.edu
 
@@ -171,8 +134,10 @@ func main() {
 	// Message: { "method": "set", "name": "☁ message", "value": input_data.value }
 	
 	// project_id: 859836142
-	//  		   859836142
-	
+	//             ^^^^^^^^^ for "Websocket testing" project
+
+	projectID := "1366075816"
+
 	headers := http.Header{}
 	headers.Add("X-CSRFToken", csrfToken)
 	headers.Add("Cookie", "scratchcsrftoken="+csrfToken+"; scratchsessionsid="+sessionId+";")
@@ -187,18 +152,18 @@ func main() {
 	
 	// fmt.Println(resp.Status)
 
-	// defer conn.Close()
+	defer conn.Close()
 
 	// le handshake
 	msg := CloudMessage{
 		Method: "handshake",
 		User: UserInfo.Username,
-		ProjectID: "859836142",
+		ProjectID: projectID,
 	}
 	data, _ := json.Marshal(msg)
 	data = append(data, '\n')
 
-	fmt.Println(string(data))
+	// fmt.Println(string(data))
 
 	err = conn.WriteMessage(
 		websocket.TextMessage,
@@ -208,29 +173,60 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Sent handshake")
-	
+	fmt.Println("Connected to the server!")	
+
 	defer conn.Close()
-/*
-	conn.SetReadDeadline(time.Now().Add(5 * time.Second))
-
-	// Read response
-	messageType, message, err := conn.ReadMessage()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println("Type:", messageType)
-	fmt.Println("Message:", string(message))
-*/
 
 	go func() {
+		for {
+			_, message, err := conn.ReadMessage()
+			if err != nil {
+				log.Println(err)
+				return
+			}
+
+			// fmt.Println(string(message))
+
+			for _, line := range strings.Split(string(message), "\n") {
+				if strings.TrimSpace(line) == "" {
+					continue
+				}
+
+				var msg CloudMessage
+
+				err := json.Unmarshal([]byte(line), &msg)
+				if err != nil {
+					fmt.Println("Error unmarshaling JSON:", err)
+					continue
+				}
+				
+				if msg.Name == "☁ one" {
+					fmt.Printf("[%s] %s\n",
+						time.Now().Format("15:04:05"),
+						Deblue(msg.Value),
+					)
+				}
+			}
+		}
+	}()
+	
+	// always ready for your input
+	for {
+		var input string
+		fmt.Scanln(&input)
+		
+		input = strings.TrimSpace(input)
+		
+		enblued := Enblue(input)
+
+		fmt.Println(enblued)
+
 		msg = CloudMessage{
 			Method: "set",
 			User: UserInfo.Username,
-			ProjectID: "859836142",
-			Name: "☁ message",
-			Value: "555555555555555555555555555555555555",
+			ProjectID: projectID,
+			Name: "☁ two",
+			Value: enblued,
 		}
 
 		data, _ = json.Marshal(msg)
@@ -242,17 +238,7 @@ func main() {
 		if err != nil {
 			log.Println(err)
 		}
-
-		for {
-			_, msg, err := conn.ReadMessage()
-			if err != nil {
-				return
-			}
-			fmt.Println(string(msg))
-		}
-	}()
-
-	select {}
+	}
 }
 
 
