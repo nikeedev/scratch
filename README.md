@@ -7,4 +7,7 @@ You can import it to either Turbowarp or Scratch and use it using the project ID
 
 This project is very vague and perhaps only a start, I will also provide info in a new file describing how to do this in a general language (not only Go, like this' source code), sort of a pseudo-code, so that everyone can implement it.
 
+### Here's the file:
+[how-it-works.md](how-it-works.md)
+
 Licensed under MIT license, cause I like it open :)
