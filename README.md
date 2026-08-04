@@ -14,4 +14,20 @@ This project is very vague and perhaps only a start, I will also provide info in
 #### Here's the file:
 [how-it-works.md](how-it-works.md)
 
-Licensed under MIT license, cause I like it open :)
+## Message encoding
+
+Scratch allows only numbers to be sent over on cloud variables (probably to make it harder to send whole strings/text/characters, and thus harder to make chats).
+I had implemented following method:
+
+Lets say you write "test" and send it, which I then parse it letter by letter.
+To separate letter by letter to be decoded, so I select 2 and 2 new numbers:
+I made an variable which stores all possible letters people can use ("abcdefghijklmnopqrstuvwxyzæøåABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ1234567890"), so lets say i parse first "t", i find the index of letter "t" in the letters-variable, which will be 20, i then add it to the variable which the rest of the encoded characters (which are numbers). Next "e", this one isn't easy to encode because it got one digit contrary to the 2 digits all numbers have from 10 and above. So i add 0 infront of the number and push it together to the variable of encoded chars.
+
+So test will be encoded to 20051920, with 20 being t, 05 being same as 5 whihch is e and, 19 which will be s. 
+
+Decoding works similary but backwards, so i receive a long chain of numbers, and i decode 2 by 2, resulting in a letter by letter.
+
+
+### **Licensed under MIT license, cause I like it to make my code open :)**
+
+
