@@ -61,11 +61,11 @@ func Enblue(text string) string {
 }
 
 func Deblue(num string) string {
-	letters := "abcdefghijklmnopqrstuvwxyzæøåABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ1234567890"
+	letters := []rune("abcdefghijklmnopqrstuvwxyzæøåABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ1234567890")
 	one := ""
 
-	for e := 0; e > utf8.RuneCountInString(num); e += 2 {
-		pair := num[e-1:e]
+	for e := 0; e+1 < len(num); e += 2 {
+		pair := num[e:e+2]
 
 		if pair == "69" {
 			one += " "
@@ -77,7 +77,9 @@ func Deblue(num string) string {
 			fmt.Println("Conversion error:", err)
 			continue
 		}
-
+		
+		index--
+		
 		if index >= 0 && index < len(letters) {
 			one += string(letters[index])
 		}	
@@ -201,7 +203,7 @@ func main() {
 				}
 				
 				if msg.Name == "☁ one" {
-					fmt.Printf("[%s] %s\n",
+					fmt.Printf("[%s] From Scratch: %s\n",
 						time.Now().Format("15:04:05"),
 						Deblue(msg.Value),
 					)
