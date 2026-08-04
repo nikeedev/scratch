@@ -1,6 +1,6 @@
 # blue 🔵 chat
 
-<img alt="blue.png" src="blue.png" width="250">
+<img alt="blue.png" src="blue.svg" width="250">
 
 The "chat" for Scratch.
 
