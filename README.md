@@ -1,5 +1,7 @@
 # blue 🔵 chat
 
+<img alt="blue.png" src="blue.png" width="250">
+
 The "chat" for Scratch.
 
 The client runs in go, and the Scratch client is in files under the name [blue.sb3](blue.sb3).
