@@ -49,7 +49,7 @@ func Enblue(text string) string {
 				
 				str := strconv.Itoa(temp)
 	
-				if temp < 9 {
+				if temp <= 9 {
 					two += "0" + str
 				} else {
 					two += str
